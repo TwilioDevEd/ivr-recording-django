@@ -35,6 +35,13 @@ IVRs (interactive voice response) are automated phone systems that can facilitat
    pip install -r requirements.txt
    ```
 
+1. Set environment variables:
+
+   ```bash
+   cp .env.example .env
+   ```
+   Then add a value to `SECRET_KEY`.
+
 1. Set up database and run migrations:
 
    ```bash
