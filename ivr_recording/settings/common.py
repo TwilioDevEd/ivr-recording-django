@@ -12,10 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
-import environ
-
-environ.Env.read_env('.env')
-env = environ.Env(DEBUG=(bool, False),)  # set default values and casting
+from .env import env
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
