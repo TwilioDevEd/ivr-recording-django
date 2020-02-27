@@ -48,6 +48,12 @@ IVRs (interactive voice response) are automated phone systems that can facilitat
    python manage.py migrate
    ```
 
+1. Load initial agents' data:
+
+   ```bash
+   python manage.py loaddata ivr/fixtures/agents.json
+   ```
+
 1. Make sure the tests succeed:
 
     ```bash
