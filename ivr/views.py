@@ -18,6 +18,12 @@ def agents(request):
     return render(request, 'ivr/agents.html', context)
 
 
+class TwiMLResponse(HttpResponse):
+    def __init__(self, *args, **kwargs):
+        kwargs['content_type'] = 'application/xml'
+        super().__init__(*args, **kwargs)
+
+
 @csrf_exempt
 def welcome(request):
     twiml_response = VoiceResponse()
@@ -37,7 +43,7 @@ def menu(request):
         '2': planets,
     }
     action = options.get(selected_option, redirect_welcome)
-    return HttpResponse(action())
+    return TwiMLResponse(action())
 
 
 def return_instructions():
@@ -76,7 +82,7 @@ def planets():
 
 def redirect_welcome():
     twiml = VoiceResponse()
-    twiml.redirect('/ivr/welcome/')
+    twiml.redirect(reverse('ivr:welcome'))
     return twiml
 
 
@@ -92,29 +98,28 @@ def agent_connect(request):
         '4': 'Oober',
     }
     selected_agent = agents.get(selected_option)
-    if selected_agent is None:
+
+    if not selected_agent:
         # Bad user input
-        return HttpResponse(str(redirect_welcome()))
-    agent = Agent.objects.get(name=selected_agent)
-    if agent is None:
-        # Agent doesn't exist on DB
-        return HttpResponse(str(redirect_welcome()))
+        return TwiMLResponse(redirect_welcome())
+
+    try:
+        agent = Agent.objects.get(name=selected_agent)
+    except Agent.DoesNotExist:
+        return TwiMLResponse(redirect_welcome())
 
     twiml = VoiceResponse()
-    try:
-        twiml.say(
-            'You\'ll be connected shortly to your planet.',
-            voice='alice',
-            language='en-GB',
-        )
-        dial = twiml.dial(
-            action=f"{reverse('ivr:agents_call')}?agentId={agent.id}",
-            callerId=agent.phone_number,
-        )
-        dial.number(agent.phone_number, url=reverse('ivr:agents_screencall'))
-        return HttpResponse(str(twiml))
-    except:
-        return HttpResponseServerError('An error has ocurred')
+    twiml.say(
+        'You\'ll be connected shortly to your planet.',
+        voice='alice',
+        language='en-GB',
+    )
+    dial = twiml.dial(
+        action=f"{reverse('ivr:agents_call')}?agentId={agent.id}",
+        callerId=agent.phone_number,
+    )
+    dial.number(agent.phone_number, url=reverse('ivr:agents_screencall'))
+    return TwiMLResponse(twiml)
 
 
 @csrf_exempt
@@ -132,7 +137,7 @@ def agent_call(request):
         action=reverse('ivr:hangup'),
         transcribe_callback=f"{reverse('ivr:recordings')}?agentId={request.GET.get('agentId')}",  # noqa
     )
-    return HttpResponse(str(twiml))
+    return TwiMLResponse(twiml)
 
 
 @csrf_exempt
@@ -142,7 +147,7 @@ def hangup(request):
         'Thanks for your message. Goodbye', voice='alice', language='en-GB',
     )
     twiml.hangup()
-    return HttpResponse(str(twiml))
+    return TwiMLResponse(twiml)
 
 
 @csrf_exempt
@@ -179,6 +184,7 @@ def recordings(request):
             url=request.POST['RecordingUrl'],
         )
         agent.recordings.add(recording)
-        return HttpResponse('Recording created', status=201)
-    except:
+    except:  # noqa
         return HttpResponseServerError('Could not create a recording')
+    else:
+        return HttpResponse('Recording created', status=201)
