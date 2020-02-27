@@ -8,7 +8,11 @@ class Recording(models.Model):
     url = models.CharField(max_length=200)
 
     def __str__(self):
-        return f'Caller: {self.caller_number}; Transcription: {self.transcription}; url: {self.url}'
+        return (
+            f'Caller: {self.caller_number}; '
+            f'Transcription: {self.transcription}; '
+            f'url: {self.url}'
+        )
 
 
 class Agent(models.Model):

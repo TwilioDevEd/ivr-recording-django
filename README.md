@@ -19,7 +19,7 @@ IVRs (interactive voice response) are automated phone systems that can facilitat
    cd ivr-recording-django
    ```
 
-1. The file `ivr/fixtures/agents.js` contains the agents phone numbers. Replace any of these phone numbers with yours.
+1. The file `ivr/fixtures/agents.json` contains the agents phone numbers. Replace any of these phone numbers with yours.
 
     When the application asks you to select an agent, choose the one you just modified and it will then call your phone.
 
@@ -46,6 +46,12 @@ IVRs (interactive voice response) are automated phone systems that can facilitat
 
    ```bash
    python manage.py migrate
+   ```
+
+1. Load initial agents' data:
+
+   ```bash
+   python manage.py loaddata ivr/fixtures/agents.json
    ```
 
 1. Make sure the tests succeed:

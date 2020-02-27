@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseServerError
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from twilio.twiml.voice_response import Say, VoiceResponse
+from twilio.twiml.voice_response import VoiceResponse
 
 from .models import Agent, Recording
 
@@ -16,6 +16,12 @@ def agents(request):
     agents = Agent.objects.order_by('name')
     context = {'agents': agents}
     return render(request, 'ivr/agents.html', context)
+
+
+class TwiMLResponse(HttpResponse):
+    def __init__(self, *args, **kwargs):
+        kwargs['content_type'] = 'application/xml'
+        super().__init__(*args, **kwargs)
 
 
 @csrf_exempt
@@ -36,8 +42,8 @@ def menu(request):
         '1': return_instructions,
         '2': planets,
     }
-    action = options.get(selected_option) or redirect_welcome
-    return HttpResponse(str(action()))
+    action = options.get(selected_option, redirect_welcome)
+    return TwiMLResponse(action())
 
 
 def return_instructions():
@@ -76,7 +82,7 @@ def planets():
 
 def redirect_welcome():
     twiml = VoiceResponse()
-    twiml.redirect('/ivr/welcome/')
+    twiml.redirect(reverse('ivr:welcome'))
     return twiml
 
 
@@ -92,29 +98,28 @@ def agent_connect(request):
         '4': 'Oober',
     }
     selected_agent = agents.get(selected_option)
-    if selected_agent is None:
+
+    if not selected_agent:
         # Bad user input
-        return HttpResponse(str(redirect_welcome()))
-    agent = Agent.objects.get(name=selected_agent)
-    if agent is None:
-        # Agent doesn't exist on DB
-        return HttpResponse(str(redirect_welcome()))
+        return TwiMLResponse(redirect_welcome())
+
+    try:
+        agent = Agent.objects.get(name=selected_agent)
+    except Agent.DoesNotExist:
+        return TwiMLResponse(redirect_welcome())
 
     twiml = VoiceResponse()
-    try:
-        twiml.say(
-            'You\'ll be connected shortly to your planet.',
-            voice='alice',
-            language='en-GB',
-        )
-        dial = twiml.dial(
-            action=f"{reverse('ivr:agents_call')}?agentId={agent.id}",
-            callerId=agent.phone_number,
-        )
-        dial.number(agent.phone_number, url=reverse('ivr:agents_screencall'))
-        return HttpResponse(str(twiml))
-    except:
-        return HttpResponseServerError('An error has ocurred')
+    twiml.say(
+        'You\'ll be connected shortly to your planet.',
+        voice='alice',
+        language='en-GB',
+    )
+    dial = twiml.dial(
+        action=f"{reverse('ivr:agents_call')}?agentId={agent.id}",
+        callerId=agent.phone_number,
+    )
+    dial.number(agent.phone_number, url=reverse('ivr:agents_screencall'))
+    return TwiMLResponse(twiml)
 
 
 @csrf_exempt
@@ -123,17 +128,16 @@ def agent_call(request):
         return HttpResponse('')
     twiml = VoiceResponse()
     twiml.say(
-        'It appears that no agent is available. '
-        'Please leave a message after the beep',
+        'It appears that no agent is available. Please leave a message after the beep',
         voice='alice',
         language='en-GB',
     )
     twiml.record(
         max_length=20,
         action=reverse('ivr:hangup'),
-        transcribe_callback=f"{reverse('ivr:recordings')}?agentId={request.GET.get('agentId')}",
+        transcribe_callback=f"{reverse('ivr:recordings')}?agentId={request.GET.get('agentId')}",  # noqa
     )
-    return HttpResponse(str(twiml))
+    return TwiMLResponse(twiml)
 
 
 @csrf_exempt
@@ -143,7 +147,7 @@ def hangup(request):
         'Thanks for your message. Goodbye', voice='alice', language='en-GB',
     )
     twiml.hangup()
-    return HttpResponse(str(twiml))
+    return TwiMLResponse(twiml)
 
 
 @csrf_exempt
@@ -168,6 +172,7 @@ def connect_message(request):
 
 # RECORDINGS
 
+
 @csrf_exempt
 def recordings(request):
     agentId = request.GET.get('agentId')
@@ -179,6 +184,7 @@ def recordings(request):
             url=request.POST['RecordingUrl'],
         )
         agent.recordings.add(recording)
-        return HttpResponse('Recording created', status=201)
-    except:
+    except:  # noqa
         return HttpResponseServerError('Could not create a recording')
+    else:
+        return HttpResponse('Recording created', status=201)
