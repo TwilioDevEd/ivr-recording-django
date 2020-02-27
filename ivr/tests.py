@@ -31,8 +31,14 @@ class IVRViewsTest(TestCase):
         self.assertEqual(
             response.content,
             b'<?xml version="1.0" encoding="UTF-8"?>'
-            b'<Response><Say language="en-GB" voice="alice">To get to your extraction point, get on your bike and go down the street. Then Left down an alley. Avoid the police cars. Turn left into an unfinished housing development. Fly over the roadblock. Go passed the moon. Soon after you will see your mother ship.</Say>'
-            b'<Say>Thank you for calling the ET Phone Home Service - the adventurous alien\'s first choice in intergalactic travel</Say>'
+            b'<Response><Say language="en-GB" voice="alice">'
+            b'To get to your extraction point, get on your bike and go down the street. '
+            b'Then Left down an alley. Avoid the police cars. '
+            b'Turn left into an unfinished housing development. '
+            b'Fly over the roadblock. Go passed the moon. '
+            b'Soon after you will see your mother ship.</Say>'
+            b'<Say>Thank you for calling the ET Phone Home Service '
+            b'- the adventurous alien\'s first choice in intergalactic travel</Say>'
             b'<Hangup /></Response>',
         )
 
@@ -43,7 +49,11 @@ class IVRViewsTest(TestCase):
             response.content,
             b'<?xml version="1.0" encoding="UTF-8"?>'
             b'<Response><Gather action="/ivr/agent/connect" numDigits="1">'
-            b'<Say language="en-GB" loop="3" voice="alice">To call the planet Broh doe As O G, press 2. To call the planet DuhGo bah, press 3. To call an oober asteroid to your location, press 4. To go back to the main menu, press the star key </Say>'
+            b'<Say language="en-GB" loop="3" voice="alice">'
+            b'To call the planet Broh doe As O G, press 2. '
+            b'To call the planet DuhGo bah, press 3. '
+            b'To call an oober asteroid to your location, press 4. '
+            b'To go back to the main menu, press the star key </Say>'
             b'</Gather></Response>',
         )
 
@@ -52,7 +62,8 @@ class IVRViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.content,
-            b'<?xml version="1.0" encoding="UTF-8"?><Response><Redirect>/ivr/welcome/</Redirect></Response>',
+            b'<?xml version="1.0" encoding="UTF-8"?>'
+            b'<Response><Redirect>/ivr/welcome/</Redirect></Response>',
         )
 
     def test_agent_connect_valid(self):
@@ -62,7 +73,8 @@ class IVRViewsTest(TestCase):
         self.assertEqual(
             response.content,
             b'<?xml version="1.0" encoding="UTF-8"?>'
-            b'<Response><Say language="en-GB" voice="alice">You\'ll be connected shortly to your planet.</Say>'
+            b'<Response><Say language="en-GB" voice="alice">'
+            b'You\'ll be connected shortly to your planet.</Say>'
             b'<Dial action="/ivr/agent/call?agentId=1" callerId="1234567890">'
             b'<Number url="/ivr/agent/screencall">1234567890</Number>'
             b'</Dial></Response>',
@@ -73,7 +85,8 @@ class IVRViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.content,
-            b'<?xml version="1.0" encoding="UTF-8"?><Response><Redirect>/ivr/welcome/</Redirect></Response>',
+            b'<?xml version="1.0" encoding="UTF-8"?>'
+            b'<Response><Redirect>/ivr/welcome/</Redirect></Response>',
         )
 
     def test_agent_call_completed(self):
@@ -91,8 +104,11 @@ class IVRViewsTest(TestCase):
         self.assertEqual(
             response.content,
             b'<?xml version="1.0" encoding="UTF-8"?>'
-            b'<Response><Say language="en-GB" voice="alice">It appears that no agent is available. Please leave a message after the beep</Say>'
-            b'<Record action="/ivr/agent/hangup" maxLength="20" transcribeCallback="/ivr/agent/recordings?agentId=1" />'
+            b'<Response><Say language="en-GB" voice="alice">'
+            b'It appears that no agent is available. '
+            b'Please leave a message after the beep'
+            b'</Say><Record action="/ivr/agent/hangup" maxLength="20" '
+            b'transcribeCallback="/ivr/agent/recordings?agentId=1" />'
             b'</Response>',
         )
 
@@ -102,7 +118,8 @@ class IVRViewsTest(TestCase):
         self.assertEqual(
             response.content,
             b'<?xml version="1.0" encoding="UTF-8"?>'
-            b'<Response><Say language="en-GB" voice="alice">Thanks for your message. Goodbye</Say>'
+            b'<Response><Say language="en-GB" voice="alice">'
+            b'Thanks for your message. Goodbye</Say>'
             b'<Hangup /></Response>',
         )
 
@@ -114,7 +131,8 @@ class IVRViewsTest(TestCase):
         self.assertEqual(
             response.content,
             b'<?xml version="1.0" encoding="UTF-8"?>'
-            b'<Response><Gather action="/ivr/agent/connect_message"><Say>1 2 3 4 5 6 7 8 9 0</Say><Say>Press any key to accept</Say></Gather>'
+            b'<Response><Gather action="/ivr/agent/connect_message">'
+            b'<Say>1 2 3 4 5 6 7 8 9 0</Say><Say>Press any key to accept</Say></Gather>'
             b'<Say>Sorry. Did not get your response</Say><Hangup /></Response>',
         )
 
@@ -124,17 +142,19 @@ class IVRViewsTest(TestCase):
         self.assertEqual(
             response.content,
             b'<?xml version="1.0" encoding="UTF-8"?>'
-            b'<Response><Say>Connecting you to the extraterrestrial in distress</Say></Response>',
+            b'<Response><Say>Connecting you to the extraterrestrial in distress'
+            b'</Say></Response>',
         )
 
     def test_create_recordings(self):
         Agent.objects.create(name='Brodo', phone_number='222222222')
         response = self.client.post(
-            f"{reverse('ivr:recordings')}?agentId=1", {
+            f"{reverse('ivr:recordings')}?agentId=1",
+            {
                 'From': '1234567890',
                 'TranscriptionText': 'Sample',
-                'RecordingUrl': '/test/url'
-                }
+                'RecordingUrl': '/test/url',
+            },
         )
         self.assertEqual(response.status_code, 201)
         recordings_count = Recording.objects.count()

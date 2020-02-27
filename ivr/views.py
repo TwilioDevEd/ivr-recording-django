@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseServerError
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-from twilio.twiml.voice_response import Say, VoiceResponse
+from twilio.twiml.voice_response import VoiceResponse
 
 from .models import Agent, Recording
 
@@ -36,8 +36,8 @@ def menu(request):
         '1': return_instructions,
         '2': planets,
     }
-    action = options.get(selected_option) or redirect_welcome
-    return HttpResponse(str(action()))
+    action = options.get(selected_option, redirect_welcome)
+    return HttpResponse(action())
 
 
 def return_instructions():
@@ -123,15 +123,14 @@ def agent_call(request):
         return HttpResponse('')
     twiml = VoiceResponse()
     twiml.say(
-        'It appears that no agent is available. '
-        'Please leave a message after the beep',
+        'It appears that no agent is available. Please leave a message after the beep',
         voice='alice',
         language='en-GB',
     )
     twiml.record(
         max_length=20,
         action=reverse('ivr:hangup'),
-        transcribe_callback=f"{reverse('ivr:recordings')}?agentId={request.GET.get('agentId')}",
+        transcribe_callback=f"{reverse('ivr:recordings')}?agentId={request.GET.get('agentId')}",  # noqa
     )
     return HttpResponse(str(twiml))
 
@@ -167,6 +166,7 @@ def connect_message(request):
 
 
 # RECORDINGS
+
 
 @csrf_exempt
 def recordings(request):
