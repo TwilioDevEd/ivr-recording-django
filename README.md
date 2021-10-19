@@ -8,7 +8,7 @@ IVRs (interactive voice response) are automated phone systems that can facilitat
 
 [Read the full tutorial here](https://www.twilio.com/docs/tutorials/walkthrough/ivr-screening/python/django)!
 
-[![Build Status](https://travis-ci.org/TwilioDevEd/ivr-recording-node.svg?branch=master)](https://travis-ci.org/TwilioDevEd/ivr-recording-django)
+[![Build and test](https://github.com/TwilioDevEd/ivr-recording-django/actions/workflows/build_test.yml/badge.svg)](https://github.com/TwilioDevEd/ivr-recording-django/actions/workflows/build_test.yml)
 
 ## Local Development
 
