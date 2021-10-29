@@ -42,6 +42,8 @@ IVRs (interactive voice response) are automated phone systems that can facilitat
    ```
    Then add a value to `SECRET_KEY`.
 
+   Note: `DEBUG` variable is False by default. Feel free to update it to True if needed.
+
 1. Set up database and run migrations:
 
    ```bash
