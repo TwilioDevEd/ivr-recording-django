@@ -27,7 +27,7 @@ ptyprocess==0.6.0
 pycodestyle==2.5.0
 pyflakes==2.1.1
 Pygments==2.5.2
-PyJWT==1.7.1
+PyJWT==2.4.0
 pytz==2019.3
 regex==2020.1.8
 requests==2.22.0
