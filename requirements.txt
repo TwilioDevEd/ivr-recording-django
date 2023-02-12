@@ -14,7 +14,7 @@ entrypoints==0.3
 flake8==3.7.9
 idna==2.8
 ipdb==0.12.3
-ipython==7.12.0
+ipython==8.10.0
 ipython-genutils==0.2.0
 jedi==0.16.0
 mccabe==0.6.1
