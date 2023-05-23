@@ -30,7 +30,7 @@ Pygments==2.5.2
 PyJWT==1.7.1
 pytz==2019.3
 regex==2020.1.8
-requests==2.22.0
+requests==2.31.0
 six==1.14.0
 sqlparse==0.3.0
 toml==0.10.0
