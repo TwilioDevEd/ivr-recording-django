@@ -31,7 +31,7 @@ class IVRViewsTest(TestCase):
         self.assertEqual(
             response.content,
             b'<?xml version="1.0" encoding="UTF-8"?>'
-            b'<Response><Say language="en-GB" voice="alice">'
+            b'<Response><Say language="en-GB" voice="Polly.Amy">'
             b'To get to your extraction point, get on your bike and go down the street. '
             b'Then Left down an alley. Avoid the police cars. '
             b'Turn left into an unfinished housing development. '
@@ -49,7 +49,7 @@ class IVRViewsTest(TestCase):
             response.content,
             b'<?xml version="1.0" encoding="UTF-8"?>'
             b'<Response><Gather action="/ivr/agent/connect" numDigits="1">'
-            b'<Say language="en-GB" loop="3" voice="alice">'
+            b'<Say language="en-GB" loop="3" voice="Polly.Amy">'
             b'To call the planet Broh doe As O G, press 2. '
             b'To call the planet DuhGo bah, press 3. '
             b'To call an oober asteroid to your location, press 4. '
@@ -73,7 +73,7 @@ class IVRViewsTest(TestCase):
         self.assertEqual(
             response.content,
             b'<?xml version="1.0" encoding="UTF-8"?>'
-            b'<Response><Say language="en-GB" voice="alice">'
+            b'<Response><Say language="en-GB" voice="Polly.Amy">'
             b'You\'ll be connected shortly to your planet.</Say>'
             b'<Dial action="/ivr/agent/call?agentId=1" callerId="1234567890">'
             b'<Number url="/ivr/agent/screencall">1234567890</Number>'
@@ -104,7 +104,7 @@ class IVRViewsTest(TestCase):
         self.assertEqual(
             response.content,
             b'<?xml version="1.0" encoding="UTF-8"?>'
-            b'<Response><Say language="en-GB" voice="alice">'
+            b'<Response><Say language="en-GB" voice="Polly.Amy">'
             b'It appears that no agent is available. '
             b'Please leave a message after the beep'
             b'</Say><Record action="/ivr/agent/hangup" maxLength="20" '
@@ -118,7 +118,7 @@ class IVRViewsTest(TestCase):
         self.assertEqual(
             response.content,
             b'<?xml version="1.0" encoding="UTF-8"?>'
-            b'<Response><Say language="en-GB" voice="alice">'
+            b'<Response><Say language="en-GB" voice="Polly.Amy">'
             b'Thanks for your message. Goodbye</Say>'
             b'<Hangup /></Response>',
         )

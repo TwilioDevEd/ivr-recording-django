@@ -54,7 +54,7 @@ def return_instructions():
         ' Turn left into an unfinished housing development. Fly over '
         'the roadblock. Go passed the moon. Soon after you will see '
         'your mother ship.',
-        voice='alice',
+        voice='Polly.Amy',
         language='en-GB',
     )
     twiml_response.say(
@@ -73,7 +73,7 @@ def planets():
         'planet DuhGo bah, press 3. To call an oober asteroid to your '
         'location, press 4. To go back to the main menu, press '
         'the star key ',
-        voice='alice',
+        voice='Polly.Amy',
         language='en-GB',
         loop=3,
     )
@@ -111,7 +111,7 @@ def agent_connect(request):
     twiml = VoiceResponse()
     twiml.say(
         'You\'ll be connected shortly to your planet.',
-        voice='alice',
+        voice='Polly.Amy',
         language='en-GB',
     )
     dial = twiml.dial(
@@ -129,7 +129,7 @@ def agent_call(request):
     twiml = VoiceResponse()
     twiml.say(
         'It appears that no agent is available. Please leave a message after the beep',
-        voice='alice',
+        voice='Polly.Amy',
         language='en-GB',
     )
     twiml.record(
@@ -144,7 +144,7 @@ def agent_call(request):
 def hangup(request):
     twiml = VoiceResponse()
     twiml.say(
-        'Thanks for your message. Goodbye', voice='alice', language='en-GB',
+        'Thanks for your message. Goodbye', voice='Polly.Amy', language='en-GB',
     )
     twiml.hangup()
     return TwiMLResponse(twiml)
