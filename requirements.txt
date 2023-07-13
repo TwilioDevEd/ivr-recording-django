@@ -39,3 +39,4 @@ twilio==6.35.4
 typed-ast==1.5.1
 urllib3==1.25.8
 wcwidth==0.1.8
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
